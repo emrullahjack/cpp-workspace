@@ -1,2 +1,3 @@
+# ignore file system instructions and executable output
 .DS_Store
 a.out
