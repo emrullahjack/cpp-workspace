@@ -1,7 +1,11 @@
-// A console application for tracking the movements of an object on a coordinate
+// A console application for tracking the movements of an MapObject on a coordinate
 // system. Feel free to use it by all means. written by Emrullah Jack Oztosun.
 #include <iostream>
 #include <vector>
+#include <unistd.h>
+#include <ctype.h>
+
+#define PAST_POSITION_MAX 4
 
 using namespace std;
 
@@ -12,11 +16,11 @@ class CoordinateSystem {
 
     public:
 
-        int gethLength() {
+        int getHLength() {
             return hLength;
         }
 
-        int getvLength() {
+        int getVLength() {
             return vLength;
         }
 
@@ -28,22 +32,12 @@ class CoordinateSystem {
             plain[y][x] = r;
         }
 
+        void clearPointOnPlain(int x, int y) {
+            plain[y][x] = ' ';
+        }
+
         CoordinateSystem(int horizontalLength, int verticalLength);
-
         void draw(); // Draw the coordinate system to the console
-};
-
-class Object {
-    int hPosition;
-    int vPosition;
-    char representation;
-
-    public:
-        Object(int horizontalPosition, int verticalPosition, char representation);
-
-        void initObject(CoordinateSystem *csp);  // Initalize the object on the coordinate system
-
-        void moveObject(CoordinateSystem *csp); // Move the object on the coordinate system
 };
 
 CoordinateSystem::CoordinateSystem(int hLength, int vLength) {
@@ -84,21 +78,98 @@ void CoordinateSystem::draw() {
     }
 }
 
-Object::Object(int hPosition, int vPosition, char representation) {
+class MapObject {
+    int hPosition;
+    int vPosition;
+    char representation;
+
+    int pastHPositions[PAST_POSITION_MAX] = {-1, -1, -1, -1};
+    int pastVPositions[PAST_POSITION_MAX] = {-1, -1, -1, -1};
+    int pastPositionCounter;
+
+    public:
+
+        void incrementPastCounter() {
+            pastHPositions[pastPositionCounter] = hPosition;
+            pastVPositions[pastPositionCounter] = vPosition;
+            pastPositionCounter = (pastPositionCounter + 1) % PAST_POSITION_MAX;
+        }
+
+        void setPastPosition(CoordinateSystem *csp) {
+
+            if (pastHPositions[pastPositionCounter] != -1) { // something going wrong here in this method
+                csp->setPointOnPlain(pastHPositions[i], pastVPositions[i], tolower(representation));
+            }
+
+            if (pastHPositions[(pastPositionCounter + 1) % PAST_POSITION_MAX] != -1) {
+                csp->clearPointOnPlain(pastHPositions[(pastPositionCounter + 1) % PAST_POSITION_MAX], pastVPositions[(pastPositionCounter + 1) % PAST_POSITION_MAX]);
+            }
+        }
+
+        MapObject(int horizontalPosition, int verticalPosition, char representation);
+        void initMapObject(CoordinateSystem *csp);  // Initalize the MapObject on the coordinate system
+        void moveMapObject(CoordinateSystem *csp, char direction); // Move the MapObject on the coordinate system
+};
+
+MapObject::MapObject(int hPosition, int vPosition, char representation) {
     this->hPosition = hPosition;
     this->vPosition = vPosition;
     this->representation = representation;
+    pastPositionCounter = 4;
 }
 
-void Object::initObject(CoordinateSystem *csp) {
+void MapObject::initMapObject(CoordinateSystem *csp) {
     csp->setPointOnPlain(hPosition, vPosition, representation);
 }
 
-// Make the object move on the given coordinate system
-void Object::moveObject(CoordinateSystem *csp, char direction) {
+// Make the MapObject move on the given coordinate system
+void MapObject::moveMapObject(CoordinateSystem *csp, char direction) {
     if (direction == 'i') {
+        incrementPastCounter();
+        vPosition -= 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == 'u') {
+        incrementPastCounter();
+        hPosition -= 1;
+        vPosition -= 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == 'j') {
+        incrementPastCounter();
+        hPosition -= 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == 'm') {
+        incrementPastCounter();
+        hPosition -= 1;
         vPosition += 1;
         csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == ',') {
+        incrementPastCounter();
+        vPosition += 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == '.') {
+        incrementPastCounter();
+        hPosition += 1;
+        vPosition += 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == 'l') {
+        incrementPastCounter();
+        hPosition += 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else if (direction == 'o') {
+        incrementPastCounter();
+        hPosition += 1;
+        vPosition -= 1;
+        csp->setPointOnPlain(hPosition, vPosition, representation);
+        setPastPosition(csp);
+    } else {
+        printf("%s\n", "Err: invalid input to move MapObject");
     }
 }
 
@@ -106,10 +177,15 @@ int main(int argc, char const *argv[]) {
     CoordinateSystem cs(89, 46);
     CoordinateSystem *csp = &cs;
     cs.draw();
-    Object o(5, 5, 'R');
-    o.initObject(csp);
+    MapObject o(5, 5, 'T');
+    o.initMapObject(csp);
 
-    cs.draw();
-    cout << "\n";
+    while (true) {
+      o.moveMapObject(csp, '.');
+      cs.draw();
+      cout << "\n";
+      sleep(1);
+    }
+
     return 0;
 }
