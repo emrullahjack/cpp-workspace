@@ -1,0 +1,29 @@
+Let <=>: Notation for equivalence relation
+
+<u> Weak Induction </u>
+
+True => 0 member S
+0 member S => 1 member S
+1 member S => 2 member S
+2 member S => 3 member S
+3 member S => 4 member S
+4 member S => 5 member S
+5 member S => 6 member S
+6 member S => 7 member S
+...
+
+<u> Strong Induction </u>
+
+{} subset S => 0 member S
+{0} subset S => 1 member S
+{0, 1} subset S => 2 member S
+{0, 1, 2} subset S => 3 member S
+{0, 1, 2, 3} subset S => 4 member S
+{0, 1, 2, 3, 4} subset S => 5 member S
+{0, 1, 2, 3, 4, 5} subset S => 6 member S
+{0, 1, 2, 3, 4, 5, 6} subset S => 7 member S
+...
+
+Principle of Minimality: Non-existence of <b>smallest</b> counter example.
+
+Weak Induction <=> Strong Induction <=> Principle of Minimality
