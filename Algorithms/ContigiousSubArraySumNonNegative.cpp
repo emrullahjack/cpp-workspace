@@ -1,33 +1,47 @@
 #include <iostream>
 using namespace std;
 
-int* longestContigiousSubArraySumNonNegative();
+int out[10] = {0};
 
-int* longestContigiousSubArraySumNonNegative(int *in, int *out) {
-  int currentSum = 0;
-  int numberOfElementsCovered = 0;
-  for (int i = 0; i < (sizeof(in)/sizeof(*in)); i++) {
-    // loop invariant: cumulative sum non-negative
-  }
+int* longestSubarrayNonnegativeSum(int *arr, int n)
+{
+    int passedElementCounter = 0;
+    for (int i = 0; i < n; i++)
+    {
+      int cumSum = 0;
+      int passedElementCounterNew = 0;
+      while (cumSum >= 0 && i < n)
+      {
+          cumSum += arr[i];
+          passedElementCounterNew++;
+          i++;
+      }
 
-  return out;
-}
-
-int main(int argc, char const *argv[]) {
-  int input[] = {1, -2, 4, -3, 3, -2, -1, -5, 2, 5, 4, -1, 4};
-  int output[] = {2, 5, 7, 9};
-
-  int *after = longestContigiousSubArraySumNonNegative(input, output);
-
-  for (int i = 0; i < (sizeof(output)/sizeof(*output)); i++) {
-    if (i == 0) printf("{");
-    if (i == ((sizeof(output)/sizeof(*output)) - 1)) {
-      printf("%d}\n", output[i]);
-      break;
+      if (passedElementCounterNew > passedElementCounter)
+      {
+          passedElementCounter = passedElementCounterNew;
+          int j = 0;
+          while(j < passedElementCounter)
+          {
+              out[j] = arr[i - passedElementCounter + j];
+              j++;
+          }
+      }
     }
 
-    printf("%d, ", output[i]);
-  }
+    out[passedElementCounter - 1] = 0;
+    return out;
+}
 
-  return 0;
+// Driver code
+int main()
+{
+    int arr[] = {1, 0, 4, 7, 1, -5, -1,
+                           0, -15, 1, 0, 8, 12, 15, 21, 3, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    for (int i = 0; i < 10; i++) {
+      cout << longestSubarrayNonnegativeSum(arr, n)[i] << "\n";
+    }
+
+    return 0;
 }
