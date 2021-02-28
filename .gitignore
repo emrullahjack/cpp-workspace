@@ -1,3 +1,8 @@
 # ignore file system instructions and executable output
 .DS_Store
+
+# Default executable output
 a.out
+
+# vs code configurations
+.vs_code*

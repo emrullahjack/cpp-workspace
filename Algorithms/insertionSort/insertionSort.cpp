@@ -9,17 +9,18 @@ using namespace std;
 
 void insertionSort(int[], int);
 void printArray(int[], int);
+void insertionSortRecursive(int*, int);
 
-// Usage
+// A sample usage 
 int main(int argc, char** argv) {
-    int data[] = {187, 234, 123, 12, 5, 28, 192, 23};
+    int data[] = {3, 41, 52, 26, 38, 57, 9, 49};
     int n = sizeof(data)/sizeof(data[0]);
 
     cout << "Data prior sorting operation: ";
     printArray(data, n);
     cout << endl;
 
-    insertionSort(data, n);
+    insertionSortRecursive(data, n);
 
     cout << "Data after sorting operation: ";
     printArray(data, n);
@@ -28,6 +29,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+// Insertion sort iterative
 void insertionSort(int* arr, int n) {
 
     for (int j = 1; j < n; j++) {
@@ -43,6 +45,19 @@ void insertionSort(int* arr, int n) {
     }
 
     return;
+}
+
+// Insertion sort recursive
+void insertionSortRecursive(int* arr, int n) {
+    if (n > 1) {
+        insertionSortRecursive(arr, n - 1);
+        if (arr[n - 1] < arr[n - 2]) {
+            int temp = arr[n-2];
+            arr[n-2] = arr[n-1];
+            arr[n-1] = temp;
+            insertionSortRecursive(arr, n - 1);
+        }
+    }
 }
 
 void printArray(int arr[], int n) {
