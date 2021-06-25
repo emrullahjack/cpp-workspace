@@ -6,3 +6,7 @@ a.out
 
 # vs code configurations
 .vs_code*
+
+*Baykar/
+
+*.vscode
